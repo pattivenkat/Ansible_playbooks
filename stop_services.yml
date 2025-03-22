@@ -1,0 +1,38 @@
+---
+- name: OS patch in Oracle Linux 8.9 Servers
+  hosts: all
+  become: true
+  tasks:
+    - name: take prechecks
+      shell: /root/prechecks.sh
+      ignore_errors: yes
+
+    - name: Stop hybris
+      shell: /usr/local/bin/hybris_stop.sh
+      when: "'sf' in inventory_hostname"
+     # ignore_errors: yes
+    
+    - name: Stop tomcat
+      systemd:
+        name: tomcat
+        state: stopped
+     # ignore_errors: yes  # If the service isn't present or already stopped, continue without failing
+      when: "'svc-' in inventory_hostname"
+    
+    - name: Stop tomcat8 if hostname contains "svca-" or "svcb-"
+      systemd:
+        name: tomcat8
+        state: stopped
+     # ignore_errors: yes  # If the service isn't present or already stopped, continue without failing
+      when: "'svca-' in inventory_hostname or 'svcb-' in inventory_hostname" 
+
+    - name: Stop solr
+      systemd:
+        name: solr
+        state: stopped
+      # ignore_errors: yes
+      when: "'solr' in inventory_hostname"
+
+    # Add more tasks to stop additional services as needed
+
+   

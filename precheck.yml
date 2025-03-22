@@ -1,0 +1,8 @@
+---
+- name: taking prechecks before OS patch in Oracle Linux 8.9 Servers
+  hosts: all
+  become: true
+  tasks:
+    - name: take prechecks
+      shell: /root/prechecks.sh
+      ignore_errors: yes

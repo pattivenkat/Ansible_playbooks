@@ -1,0 +1,6 @@
+---
+  - name: update a package
+    yum:
+      name: sudo
+      state: latest
+      

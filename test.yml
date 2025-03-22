@@ -1,0 +1,9 @@
+---
+- name: Replace entire content of a file
+  hosts: all
+  tasks:
+    - name: Replace file content
+      copy:
+        dest: /etc/sudoers.d/sudo_linux_wheel
+        content: "%linux_wheel@purchasingpwr.com ALL=(ALL) NOPASSWD: /bin/su - hybris, /usr/bin/jmap, /usr/bin/systemctl status datadog-agent.service, /usr/bin/systemctl start datadog-agent.service, /usr/bin/systemctl stop datadog-agent.service, /usr/bin/systemctl restart datadog-agent.service, /usr/bin/systemctl status tomcat.service, /usr/bin/systemctl start tomcat.service, /usr/bin/systemctl stop tomcat.service, /usr/bin/systemctl restart tomcat.service, /usr/bin/systemctl status tomcat8.service, /usr/bin/systemctl start tomcat8.service, /usr/bin/systemctl stop tomcat8.service, /usr/bin/systemctl restart tomcat8.service, /usr/bin/systemctl status zabbix-agent.service, /usr/bin/systemctl start zabbix-agent.service, /usr/bin/systemctl stop zabbix-agent.service, /usr/bin/systemctl restart zabbix-agent.service, /usr/bin/systemctl status appdynamics-machine-agent.service, /usr/bin/systemctl start appdynamics-machine-agent.service, /usr/bin/systemctl stop appdynamics-machine-agent.service, /usr/bin/systemctl restart appdynamics-machine-agent.service, /usr/bin/systemctl status nginx.service, /usr/bin/systemctl start nginx.service, /usr/bin/systemctl stop nginx.service, /usr/bin/systemctl restart nginx.service
+"

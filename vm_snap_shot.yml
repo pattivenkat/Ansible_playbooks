@@ -1,0 +1,35 @@
+---
+- name: Take snapshots of VMs after stopping services
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: Stop service1
+      systemd:
+        name: solr
+        state: stopped
+      ignore_errors: yes  # If the service isn't present or already stopped, continue without failing
+
+    # Add more tasks to stop additional services as needed
+
+    - name: Take snapshot of VM
+      community.vmware.vmware_vm_shell:
+        hostname: "{{  }}"
+        username: your_vcenter_username
+        password: your_vcenter_password
+        validate_certs: no
+        vm_id: your_vm_id
+        vm_username: your_vm_username
+        vm_password: your_vm_password
+        vm_shell: vim-cmd
+        vm_shell_args: "vmsvc/snapshot.create {{ vm_id }} 'Snapshot after service stop' 'Snapshot taken after stopping services'"
+      delegate_to: localhost
+
+    # Add more tasks here as needed
+
+    - name: Start service1
+      systemd:
+        name: solr
+        state: started
+
+
+    # Add more tasks to start the services that were stopped earlier

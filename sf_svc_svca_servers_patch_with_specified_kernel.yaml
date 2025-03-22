@@ -1,0 +1,83 @@
+---
+- name: OS patch in Oracle Linux 8.9 Servers
+  hosts: all
+  become: true
+  tasks:
+    - name: take prechecks
+      shell: /root/prechecks.sh
+      ignore_errors: yes
+
+    - name: Stop hybris
+      shell: /usr/local/bin/hybris_stop.sh
+      when: "'sf' in inventory_hostname | lower or 'cs' in inventory_hostname | lower or 'cms' in inventory_hostname | lower or 'jobs' in inventory_hostname | lower"
+     # ignore_errors: yes
+    
+    - name: Stop tomcat
+      systemd:
+        name: tomcat
+        state: stopped
+     # ignore_errors: yes  # If the service isn't present or already stopped, continue without failing
+      when: "'svc-' in inventory_hostname | lower"
+    
+    - name: Stop tomcat8 if hostname contains "svca-" or "svcb-"
+      systemd:
+        name: tomcat8
+        state: stopped
+     # ignore_errors: yes  # If the service isn't present or already stopped, continue without failing
+      when: "'svca-' in inventory_hostname | lower or 'svcb-' in inventory_hostname | lower or svc11-' in inventory_hostname | lower" 
+
+    - name: Stop solr
+      systemd:
+        name: solr
+        state: stopped
+      # ignore_errors: yes
+      when: "'solr' in inventory_hostname | lower"
+
+    # Add more tasks to stop additional services as needed
+
+    - name: Update all exclude kernel-uek and install required kernel-uek
+      command: > 
+        yum update --exclude=kernel-uek* -y;yum install kernel-uek-5.4.17-2136.331.7.el8uek kernel-uek-devel-5.4.17-2136.331.7.el8uek -y
+
+    # You can add more tasks here based on your specific requirements.
+
+    - name: Reboot the server
+      reboot:
+        reboot_timeout: 300
+        test_command: uptime  # This command checks if the server is back up after reboot
+
+    - name: Wait for server to become available
+      wait_for_connection:
+        timeout: 300
+
+    - name: mount all points
+      command: mount -a
+      ignore_errors: yes
+    
+    - name: Start hybris
+      shell: /usr/local/bin/hybris_start.sh
+      when: "'sf' in inventory_hostname | lower or 'cs' in inventory_hostname | lower or 'cms' in inventory_hostname | lower or 'jobs' in inventory_hostname | lower"
+      ignore_errors: yes
+    
+    - name: Start tomcat8 if hostname contains "svca-" or "svcb-"
+      systemd:
+        name: tomcat8
+        state: started
+      when: "'svca-' in inventory_hostname | loweror 'svcb-' in inventory_hostname | lower"
+      ignore_errors: yes
+
+    - name: Start tomcat
+      systemd:
+        name: tomcat
+        state: started
+      when: "'svc-' in inventory_hostname | lower"
+      ignore_errors: yes
+
+    - name: Start solr
+      systemd:
+        name: solr
+        state: started
+      when: "'solr' in inventory_hostname | lower"
+      ignore_errors: yes
+
+    # Add more tasks to start the services that were stopped earlier
