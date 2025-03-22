@@ -1,0 +1,11 @@
+---
+    - hosts: all
+      become: true
+      tasks: 
+        - name: permit a AD user
+          shell: realm permit vineethm@purchasingpwr.com
+        - name: adding in sudoers
+          copy: 
+           dest: /etc/sudoers.d/sudo_vineethm
+           content: | 
+            vineethm@purchasingpwr.com ALL=(ALL) NOPASSWD: ALL
