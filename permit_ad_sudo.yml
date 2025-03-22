@@ -3,9 +3,9 @@
       become: true
       tasks: 
         - name: permit a AD user
-          shell: realm permit vineethm@purchasingpwr.com
+          shell: realm permit AD_user
         - name: adding in sudoers
           copy: 
-           dest: /etc/sudoers.d/sudo_vineethm
+           dest: /etc/sudoers.d/sudo_file
            content: | 
-            vineethm@purchasingpwr.com ALL=(ALL) NOPASSWD: ALL
+            AD_user ALL=(ALL) NOPASSWD: ALL
